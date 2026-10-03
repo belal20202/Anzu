@@ -1,11 +1,11 @@
 'use strict';
 /* منطق اللعبة والواجهات */
-const GRAV=1500,FLAP=-455,BR=12,PHL=250;
+const GRAV=1500,FLAP=-455,BR=10,BS=.78,PHL=250;
 const PH=[{t:'day',w:'clear',n:'نهار مشمس'},{t:'day',w:'rain',n:'مطر'},{t:'sunset',w:'clear',n:'غروب'},{t:'night',w:'clear',n:'ليل'},{t:'night',w:'snow',n:'ثلوج ليلية'},{t:'dawn',w:'clear',n:'فجر'},{t:'day',w:'snow',n:'ثلوج'},{t:'day',w:'clear',n:'شمس الظهيرة'}];
 const UP={magnet:{n:'المغناطيس',i:'🧲',d:'يجذب العملات القريبة نحوك',base:5,add:1.5},shield:{n:'الدرع',i:'🛡️',d:'يحميك من اصطدام واحد',base:8,add:2},slow:{n:'تبطيء الوقت',i:'⏳',d:'يبطئ سرعة اللعبة ليسهل المرور',base:4,add:1}};
 const UPC=[500,1100,2000,3500,6000],UPMAX=5;
 const upDur=k=>UP[k].base+UP[k].add*S.up[k];
-const slowF=()=>.62-.03*S.up.slow;
+const slowF=()=>.7-.03*S.up.slow;
 const magR=()=>130+25*S.up.magnet;
 const MP=[
  {t:'dist_run',g:150,r:150,m:'max',x:'اقطع 150 متراً في جولة واحدة'},
@@ -31,11 +31,18 @@ const MP=[
 ];
 const DAILY=[150,250,350,500,700,900,1500];
 const STORY=[
- 'قبل آلاف السنين، على ضفاف دجلة والفرات حيث وُلدت الحضارة، كانت السماء تحرس سرّاً عظيماً.',
- 'هناك عاش «أنزو»، الطائر الأسطوري الذي قيل إنه يحمل لوح الأقدار بين جناحيه.',
- 'وذات ليلة، سرقت العاصفة اللوح وبعثرت الذهب فوق مدن العراق ونخيله.',
- 'حلّق أنزو من جديد، بين أعمدة الحجر، في الشمس والمطر والثلج، لا يهدأ حتى يستعيد ما ضاع.',
- 'ساعده على جمع الذهب، وانظر إلى أي مدى تصل...'
+ ['الفصل الأول: لوح الأقدار','قبل أن تُكتب الحروف الأولى على الطين، كانت أرض الرافدين تتنفس تحت سماء لا تنام. وفي قمة جبل مقدّس، كان «لوح الأقدار» يشعّ كقلب نابض؛ من يحمله يُمسك بمصير الأرض والسماء.'],
+ ['الفصل الثاني: الحارس','حرس اللوحَ طائر أسطوري عظيم الجناحين يُدعى «أنزو». لم يعرف الخوف يوماً، ولم يعرف الليل كيف يخفي عنه شيئاً... لكنه لم يعلم أن ريحاً سوداء تتربّص به منذ آلاف السنين.'],
+ ['الفصل الثالث: العاصفة','في ليلة بلا قمر، انفجرت عاصفة هوجاء من أعماق البحر المالح، كأنها صرخة التنين القديم. تمزّقت الغيوم، وتشقّق الجبل، وارتجف النخيل في كل المدن حتى بلغ الدويّ بابل وأور.'],
+ ['الفصل الرابع: الشظايا','حين انجلى الغبار كان اللوح قد تحطّم. تناثرت شظاياه الذهبية فوق زقورة أور، وبوابة عشتار الزرقاء، وجنائن بابل المعلّقة، وقباب بغداد البعيدة... وكل شظية تحمل سرّاً من أسرار الحضارة.'],
+ ['الفصل الخامس: السقوط','وهوى أنزو من أعالي السماء، جناحاه مجروحان وريشه متفحّم. رآه الإله «إيا» من أعماق المياه العذبة، فهمس له: «لم ينتهِ الأمر يا حارس الأقدار. ما دمتَ تطير فالأمل حيّ.»'],
+ ['الفصل السادس: الهدايا الثلاث','شفى الإلهُ جراحه ووهبه ثلاث هدايا: مغناطيساً يسحب الذهب المتناثر إليه، ودرعاً يصدّ ضربة واحدة، ولحظةً سحرية تُبطئ الزمن نفسه. وقال: «تكبر قوة الهدايا كلما جمعتَ من الذهب أكثر.»'],
+ ['الفصل السابع: لعنة الحجر','لكن الدرب ليس مفتوحاً. نبتت أعمدة الحجر كأسنان الوحوش لتسدّ السماء، تحرسها لعنةُ ملكٍ قديم لا يريد للوح أن يعود، وتهمس بين شقوقها أصواتٌ تقول: «ارجع... ارجع.»'],
+ ['الفصل الثامن: سماء لا ترحم','وفي الأعلى رقيبٌ آخر: مطرٌ يثقل الجناح، وثلجٌ لم يعرفه العراق منذ ألف عام، وليلٌ طويل تتحرّك فيه ظلالٌ ليست من هذا العالم. كل غروب أقرب إلى الظلام، وكل فجر أبعد من الأمل.'],
+ ['الفصل التاسع: الهمس','وسمع أنزو همساً بين الغيوم: «كل شظية تعود تُنير مدينة، وكل مدينة تُنير قلباً. فإن جمعتَ ما يكفي، ستنهض الحضارة من رمادها، وتُكتب الأقدار من جديد.»'],
+ ['الفصل العاشر: أزياء الأجداد','ويُقال إن من يرتدي أزياء الملوك والآلهة القدماء، تاجَ أور وخوذةَ سرجون وعمامةَ بابل ودرعَ آشور، تنحني له الريح ويهابه الظلام. فارتدى أنزو أول ثوب: ثوب كاهنٍ سومري.'],
+ ['الفصل الحادي عشر: الصيحة','عند حافة الفجر رفع رأسه نحو الأفق وأطلق صيحته الأولى منذ الطوفان. ارتجّت الزقورات، وأضاءت بوابة عشتار بزرقتها، وفتحت الجنائن أبوابها... وبدأ العدّ.'],
+ ['الفصل الأخير: الآن','الحكاية الآن بين يديك. لا تدعه يسقط، فكل متر تقطعه خطوة نحو لوح الأقدار، وكل عملة ذهبية شظية تعود إلى مكانها. هل أنت جاهز يا حارس الريح؟']
 ];
 
 /* ====== الحالة ====== */
@@ -46,9 +53,11 @@ const bird={y:H*.5,vy:0,rot:0,wp:0,boost:0,inv:0};
 let pipes=[],coins=[],pups=[],fx=[],seen={};
 const P={magnet:0,shield:0,slow:0};
 const birdX=()=>clamp(VW*.3,80,150);
+let tsNow=1,slowOn=false;
+const pch={};for(const k in UP)pch[k]={box:$('#pw_'+k),bar:$('#pwb_'+k),on:false,w:''};
 
 function resize(){
-  const dpr=Math.min(window.devicePixelRatio||1,S.set.low?1.25:2.5),w=innerWidth||360,h=innerHeight||640;
+  const dpr=Math.min(window.devicePixelRatio||1,S.set.low?1.25:2),w=innerWidth||360,h=innerHeight||640;
   cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px';
   scale=cv.height/H;VW=cv.width/scale;
 }
@@ -68,7 +77,7 @@ function goMenu(){
 }
 function goReady(){resetRun();state='ready';show(null);setHud(true);$('#hudHint').classList.remove('hidden');$('#hudDist').textContent='0 م';$('#hudCoins').textContent='🪙 0';envTarget('day','clear');phIdx=-1;updatePowersHud();}
 function startPlay(){state='play';$('#hudHint').classList.add('hidden');flap();}
-function resetRun(){pipes=[];coins=[];pups=[];fx=[];seen={};dist=0;runCoins=0;passed=0;speed=190;nextPup=rint(5,8);deadT=0;overShown=false;P.magnet=P.shield=P.slow=0;
+function resetRun(){pipes=[];coins=[];pups=[];fx=[];seen={};dist=0;runCoins=0;passed=0;speed=190;nextPup=rint(5,8);deadT=0;overShown=false;P.magnet=P.shield=P.slow=0;tsNow=1;
   Object.assign(bird,{y:H*.42,vy:0,rot:0,boost:0,inv:0});shake=0;}
 
 /* ====== مهام ====== */
@@ -112,9 +121,9 @@ function renderShop(){
   if(shopTab==='skins'){
     L.className='grid-cards';
     L.innerHTML=SKINS.map((s,i)=>{const own=S.owned.includes(i),eq=S.skin===i;
-      return '<div class="card '+(eq?'eq':'')+'"><canvas class="sk" width="200" height="170" data-i="'+i+'"></canvas><div class="cn">'+s.n+'</div>'+
+      return '<div class="card '+(eq?'eq':'')+'"><canvas class="sk" width="200" height="192" data-i="'+i+'"></canvas><div class="cn">'+s.n+'</div>'+
         (own?'<button class="btn sm '+(eq?'ghost':'')+'" data-eq="'+i+'" '+(eq?'disabled':'')+'>'+(eq?'مُختار':'اختيار')+'</button>':'<button class="btn sm buy" data-buy="'+i+'">🪙 '+fmt(s.p)+'</button>')+'</div>';}).join('');
-    $$('#shopList canvas.sk').forEach(c=>{const x=c.getContext('2d');x.scale(2,2);drawBird(x,52,52,-.12,SKINS[+c.dataset.i],0,.25,1.55);});
+    $$('#shopList canvas.sk').forEach(c=>{const x=c.getContext('2d');x.scale(2,2);drawBird(x,58,64,-.1,SKINS[+c.dataset.i],0,.25,1.08);});
   }else{
     L.className='list-cards';
     L.innerHTML=Object.keys(UP).map(k=>{const lv=S.up[k],u=UP[k],max=lv>=UPMAX;
@@ -157,7 +166,7 @@ $('#privClose').onclick=()=>$('#privacy').classList.add('hidden');
 let sIdx=0;
 function showStory(){sIdx=0;show('story');drawStory();}
 function drawStory(){
-  $('#storyText').style.opacity=0;setTimeout(()=>{$('#storyText').textContent=STORY[sIdx];$('#storyText').style.opacity=1;},180);
+  const bx=$('#storyBox');bx.style.opacity=0;setTimeout(()=>{$('#storyTitle').textContent=STORY[sIdx][0];$('#storyText').textContent=STORY[sIdx][1];bx.style.opacity=1;},180);
   $('#storyDots').innerHTML=STORY.map((_,i)=>'<i class="'+(i===sIdx?'on':'')+'"></i>').join('');
   $('#storyNext').textContent=sIdx===STORY.length-1?'ابدأ الرحلة':'التالي';
 }
@@ -216,12 +225,12 @@ function announce(t){const e=$('#hudPhase');e.textContent=t;e.classList.remove('
 let hudCache={};
 function setTxt(id,v){if(hudCache[id]!==v){hudCache[id]=v;$('#'+id).textContent=v;}}
 function updatePowersHud(){
-  const el=$('#hudPowers');let h='';
-  for(const k in P)if(P[k]>0){const mx=k==='shield'?upDur('shield'):upDur(k);h+='<div class="pchip"><span>'+UP[k].i+'</span><div class="pbar"><i style="width:'+clamp(P[k]/mx*100,0,100)+'%"></i></div></div>';}
-  if(h!==hudCache.pw){hudCache.pw=h;el.innerHTML=h;}
+  for(const k in P){const el=pch[k],on=P[k]>0;if(on!==el.on){el.on=on;el.box.style.display=on?'flex':'none';}
+    if(on){const w=clamp(P[k]/upDur(k)*100,0,100).toFixed(0)+'%';if(w!==el.w){el.w=w;el.bar.style.width=w;}}}
+  const sl=P.slow>0;if(sl!==slowOn){slowOn=sl;$('#hudSlow').classList.toggle('hidden',!sl);}
 }
 function updatePlay(dt){
-  const ts=P.slow>0?slowF():1,d=dt*ts,bx=birdX();
+  tsNow=lerp(tsNow,P.slow>0?slowF():1,Math.min(1,dt*6));const d=dt*tsNow,bx=birdX();
   for(const k in P)if(P[k]>0)P[k]=Math.max(0,P[k]-dt);
   if(bird.inv>0)bird.inv-=dt;
   const m=dist/40;speed=185+Math.min(115,m*.28);dist+=speed*d;cam+=speed*d;
@@ -281,13 +290,13 @@ function render(){
   for(const o of coins)drawCoin(c,o,T);
   for(const o of pups)drawPickup(c,o,T);
   const sk=SKINS[S.skin]||SKINS[0],bx=birdX();
-  if(state==='menu'||cur==='shop'){drawBird(c,VW/2,H*.5+Math.sin(T*2)*9,Math.sin(T*1.5)*.08,sk,T*7,.4,2.2);}
+  if(state==='menu'||cur==='shop'){drawBird(c,VW/2,H*.5+Math.sin(T*2)*9,Math.sin(T*1.5)*.08,sk,T*7,.4,1.9);}
   else{
     let by=bird.y,rot=bird.rot,wp=bird.wp,amp=.3+bird.boost*.75;
     if(state==='ready'){by=H*.42+Math.sin(T*3)*7;rot=0;wp=T*8;amp=.45;}
     if(state==='dead'||state==='over')amp=.12;
-    if(!(bird.inv>0&&state==='play'&&Math.floor(T*14)%2))drawBird(c,bx,by,rot,sk,wp,amp,1);
-    if(P.shield>0&&state==='play'){const bl=P.shield<2&&Math.floor(T*8)%2;if(!bl){c.strokeStyle='rgba(120,220,255,'+(.65+.25*Math.sin(T*6))+')';c.lineWidth=3;c.fillStyle='rgba(120,220,255,.14)';c.beginPath();c.arc(bx,by,27,0,6.3);c.fill();c.stroke();}}
+    if(!(bird.inv>0&&state==='play'&&Math.floor(T*14)%2))drawBird(c,bx,by,rot,sk,wp,amp,BS);
+    if(P.shield>0&&state==='play'){const bl=P.shield<2&&Math.floor(T*8)%2;if(!bl){c.strokeStyle='rgba(120,220,255,'+(.65+.25*Math.sin(T*6))+')';c.lineWidth=3;c.fillStyle='rgba(120,220,255,.14)';c.beginPath();c.arc(bx,by,23,0,6.3);c.fill();c.stroke();}}
     if(P.magnet>0&&state==='play'){c.strokeStyle='rgba(255,90,90,.28)';c.lineWidth=2;c.setLineDash([6,8]);c.beginPath();c.arc(bx,by,magR()*(.9+.1*Math.sin(T*5)),0,6.3);c.stroke();c.setLineDash([]);}
   }
   for(const f of fx){c.globalAlpha=clamp(f.life*2,0,1);c.fillStyle=f.c;c.beginPath();c.arc(f.x,f.y,f.r,0,6.3);c.fill();}c.globalAlpha=1;
