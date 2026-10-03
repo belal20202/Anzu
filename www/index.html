@@ -16,7 +16,12 @@
     <button id="btnPause" class="icon-btn" aria-label="إيقاف مؤقت">❚❚</button>
     <div class="pill gold" id="hudCoins">🪙 0</div>
   </div>
-  <div id="hudPowers"></div>
+  <div id="hudPowers">
+    <div class="pchip" id="pw_magnet"><span>🧲</span><div class="pbar"><i id="pwb_magnet"></i></div></div>
+    <div class="pchip" id="pw_shield"><span>🛡️</span><div class="pbar"><i id="pwb_shield"></i></div></div>
+    <div class="pchip" id="pw_slow"><span>⏳</span><div class="pbar"><i id="pwb_slow"></i></div></div>
+  </div>
+  <div id="hudSlow" class="hidden">⏳ تبطيء الوقت</div>
   <div id="hudPhase"></div>
   <div id="hudHint">اضغط للطيران</div>
 </div>
@@ -24,7 +29,7 @@
 <section id="story" class="screen hidden story">
   <div class="story-card">
     <div class="story-mark">𒀭</div>
-    <p id="storyText"></p>
+    <div id="storyBox"><h3 id="storyTitle"></h3><p id="storyText"></p></div>
     <div class="dots" id="storyDots"></div>
     <div class="row">
       <button id="storySkip" class="btn ghost">تخطي</button>
