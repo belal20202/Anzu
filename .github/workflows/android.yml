@@ -1,0 +1,89 @@
+name: Build Anzu APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HAS_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Generate icons and splash screens
+        run: npx @capacitor/assets generate --android
+
+      - name: Patch Android manifest (portrait, vibration, no backup)
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's|android:name=".MainActivity"|android:name=".MainActivity"\n            android:screenOrientation="portrait"|' $M
+          sed -i 's|android:allowBackup="true"|android:allowBackup="false"|' $M
+          sed -i 's|</manifest>|    <uses-permission android:name="android.permission.VIBRATE" />\n</manifest>|' $M
+          cat $M
+
+      - name: Sync web files
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Anzu-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+
+      - name: Build release APK and AAB
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
+        working-directory: android
+        run: ./gradlew assembleRelease bundleRelease
+
+      - name: Sign release APK
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: android/app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Sign release AAB
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: android/app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Upload signed release files
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Anzu-release-signed
+          path: |
+            android/app/build/outputs/apk/release/*-signed.apk
+            android/app/build/outputs/bundle/release/*-signed.aab
