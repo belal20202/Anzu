@@ -1,0 +1,7 @@
+{
+  "appId": "com.anzu.game",
+  "appName": "Anzu",
+  "webDir": "www",
+  "backgroundColor": "#0b1a3a",
+  "android": { "allowMixedContent": false }
+}

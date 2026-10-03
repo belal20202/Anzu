@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1a3a">
+<title>Anzu</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<div id="hud" class="hidden">
+  <div class="hud-top">
+    <div class="pill" id="hudDist">0 م</div>
+    <button id="btnPause" class="icon-btn" aria-label="إيقاف مؤقت">❚❚</button>
+    <div class="pill gold" id="hudCoins">🪙 0</div>
+  </div>
+  <div id="hudPowers"></div>
+  <div id="hudPhase"></div>
+  <div id="hudHint">اضغط للطيران</div>
+</div>
+
+<section id="story" class="screen hidden story">
+  <div class="story-card">
+    <div class="story-mark">𒀭</div>
+    <p id="storyText"></p>
+    <div class="dots" id="storyDots"></div>
+    <div class="row">
+      <button id="storySkip" class="btn ghost">تخطي</button>
+      <button id="storyNext" class="btn">التالي</button>
+    </div>
+  </div>
+</section>
+
+<section id="menu" class="screen hidden menu">
+  <div class="menu-top">
+    <div class="pill gold" id="menuCoins">🪙 0</div>
+    <div class="pill" id="menuBest">🏆</div>
+  </div>
+  <div class="logo">
+    <h1>Anzu</h1>
+    <div class="logo-ar">أنزو</div>
+  </div>
+  <div class="grow"></div>
+  <div class="menu-btns">
+    <button class="btn big" id="btnPlay">▶ العب</button>
+    <div class="grid2">
+      <button class="btn" id="btnShop">🛍️ المتجر</button>
+      <button class="btn rel" id="btnMissions">📜 المهام<i class="dot hidden" id="dotMis"></i></button>
+      <button class="btn rel" id="btnDaily">🎁 الجوائز<i class="dot hidden" id="dotDaily"></i></button>
+      <button class="btn" id="btnSettings">⚙️ الإعدادات</button>
+    </div>
+  </div>
+  <div class="made">
+    <svg viewBox="0 0 90 60" width="42" height="28" aria-hidden="true">
+      <rect width="90" height="20" fill="#ce1126"/><rect y="20" width="90" height="20" fill="#fff"/><rect y="40" width="90" height="20" fill="#111"/>
+      <text x="45" y="35" text-anchor="middle" font-size="13" font-weight="700" fill="#007a3d" font-family="Noto Naskh Arabic,Tahoma,serif">الله أكبر</text>
+    </svg>
+    <b>صنع في العراق</b>
+  </div>
+</section>
+
+<section id="shop" class="screen hidden panel">
+  <header><button class="icon-btn" data-back aria-label="رجوع">➜</button><h2>المتجر</h2><div class="pill gold" id="shopCoins"></div></header>
+  <div class="tabs"><button class="tab on" data-tab="skins">الأزياء</button><button class="tab" data-tab="ups">القدرات</button></div>
+  <div id="shopList" class="grid-cards"></div>
+</section>
+
+<section id="missions" class="screen hidden panel">
+  <header><button class="icon-btn" data-back aria-label="رجوع">➜</button><h2>مهام اليوم</h2><span></span></header>
+  <p class="sub">تتجدد المهام العشر تلقائياً كل يوم</p>
+  <div id="misList" class="list-cards"></div>
+</section>
+
+<section id="daily" class="screen hidden panel">
+  <header><button class="icon-btn" data-back aria-label="رجوع">➜</button><h2>التسجيل اليومي</h2><span></span></header>
+  <p class="sub">سجّل كل يوم لتجمع مكافآت الأسبوع، ويبدأ الأسبوع من جديد بعد سبعة أيام</p>
+  <div id="dailyGrid"></div>
+  <button id="dailyClaim" class="btn big">استلم مكافأة اليوم</button>
+</section>
+
+<section id="settings" class="screen hidden panel">
+  <header><button class="icon-btn" data-back aria-label="رجوع">➜</button><h2>الإعدادات</h2><span></span></header>
+  <div id="setList" class="list-cards"></div>
+</section>
+
+<section id="pause" class="screen hidden dim center">
+  <div class="modal"><h2>إيقاف مؤقت</h2>
+    <button class="btn big" id="btnResume">متابعة</button>
+    <button class="btn ghost" id="btnQuit">الصفحة الرئيسية</button>
+  </div>
+</section>
+
+<section id="over" class="screen hidden dim center">
+  <div class="modal over">
+    <h2>سقط أنزو</h2>
+    <div class="ov-dist" id="ovDist">0 م</div>
+    <div class="ov-best" id="ovBest"></div>
+    <div class="ov-coins" id="ovCoins"></div>
+    <small id="ovTotal"></small>
+    <button class="btn big" id="btnReplay">↻ إعادة اللعب</button>
+    <button class="btn ghost" id="btnHome">الصفحة الرئيسية</button>
+  </div>
+</section>
+
+<div id="privacy" class="hidden overlay">
+  <div class="priv-box"><button id="privClose" class="icon-btn">✕</button><iframe id="privFrame" title="سياسة الخصوصية"></iframe></div>
+</div>
+<div id="dialog" class="hidden overlay">
+  <div class="modal"><p id="dlgMsg"></p><div class="row"><button class="btn ghost" id="dlgNo">إلغاء</button><button class="btn danger" id="dlgOk">تأكيد</button></div></div>
+</div>
+<div id="toast"></div>
+
+<script src="js/util.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/art.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
