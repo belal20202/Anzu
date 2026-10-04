@@ -14,12 +14,13 @@
   <div class="hud-top">
     <div class="pill" id="hudDist">0 م</div>
     <button id="btnPause" class="icon-btn" aria-label="إيقاف مؤقت">❚❚</button>
-    <div class="pill gold" id="hudCoins">🪙 0</div>
+    <div class="pill gold" id="hudCoins"><i class="cic"></i><b>0</b></div>
   </div>
   <div id="hudPowers">
     <div class="pchip" id="pw_magnet"><span>🧲</span><div class="pbar"><i id="pwb_magnet"></i></div></div>
     <div class="pchip" id="pw_shield"><span>🛡️</span><div class="pbar"><i id="pwb_shield"></i></div></div>
     <div class="pchip" id="pw_slow"><span>⏳</span><div class="pbar"><i id="pwb_slow"></i></div></div>
+    <div class="pchip" id="pw_double"><span>💰</span><div class="pbar"><i id="pwb_double"></i></div></div>
   </div>
   <div id="hudSlow" class="hidden">⏳ تبطيء الوقت</div>
   <div id="hudPhase"></div>
@@ -28,7 +29,7 @@
 
 <section id="story" class="screen hidden story">
   <div class="story-card">
-    <div class="story-mark">𒀭</div>
+    <div class="story-mark">🐦</div>
     <div id="storyBox"><h3 id="storyTitle"></h3><p id="storyText"></p></div>
     <div class="dots" id="storyDots"></div>
     <div class="row">
@@ -40,8 +41,8 @@
 
 <section id="menu" class="screen hidden menu">
   <div class="menu-top">
-    <div class="pill gold" id="menuCoins">🪙 0</div>
-    <div class="pill" id="menuBest">🏆</div>
+    <div class="pill gold" id="menuCoins"><i class="cic"></i><b>0</b></div>
+    <div class="pill" id="menuBest"><span>🏆</span><b></b></div>
   </div>
   <div class="logo">
     <h1>Anzu</h1>
@@ -114,6 +115,10 @@
 </div>
 <div id="dialog" class="hidden overlay">
   <div class="modal"><p id="dlgMsg"></p><div class="row"><button class="btn ghost" id="dlgNo">إلغاء</button><button class="btn danger" id="dlgOk">تأكيد</button></div></div>
+</div>
+<div id="dailyPop" class="hidden overlay">
+  <div class="modal"><div class="gift">🎁</div><h2>مكافأتك اليومية جاهزة!</h2><small id="dpDay"></small><div class="ov-coins" id="dpAmt"></div>
+    <button class="btn big" id="dpClaim">استلم الآن</button><button class="btn ghost" id="dpLater">لاحقاً</button></div>
 </div>
 <div id="toast"></div>
 
