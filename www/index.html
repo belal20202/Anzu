@@ -27,18 +27,6 @@
   <div id="hudHint">اضغط للطيران</div>
 </div>
 
-<section id="story" class="screen hidden story">
-  <div class="story-card">
-    <div class="story-mark">🐦</div>
-    <div id="storyBox"><h3 id="storyTitle"></h3><p id="storyText"></p></div>
-    <div class="dots" id="storyDots"></div>
-    <div class="row">
-      <button id="storySkip" class="btn ghost">تخطي</button>
-      <button id="storyNext" class="btn">التالي</button>
-    </div>
-  </div>
-</section>
-
 <section id="menu" class="screen hidden menu">
   <div class="menu-top">
     <div class="pill gold" id="menuCoins"><i class="cic"></i><b>0</b></div>
@@ -80,8 +68,8 @@
 </section>
 
 <section id="daily" class="screen hidden panel">
-  <header><button class="icon-btn" data-back aria-label="رجوع">➜</button><h2>التسجيل اليومي</h2><span></span></header>
-  <p class="sub">سجّل كل يوم لتجمع مكافآت الأسبوع، ويبدأ الأسبوع من جديد بعد سبعة أيام</p>
+  <header><button class="icon-btn" data-back aria-label="رجوع">➜</button><h2>المكافآت اليومية</h2><span></span></header>
+  <div class="d-prog"><div class="dp-top"><b id="dgTitle"></b><small id="dgNote"></small></div><div class="bar"><i id="dgBar"></i></div></div>
   <div id="dailyGrid"></div>
   <button id="dailyClaim" class="btn big">استلم مكافأة اليوم</button>
 </section>
@@ -117,9 +105,10 @@
   <div class="modal"><p id="dlgMsg"></p><div class="row"><button class="btn ghost" id="dlgNo">إلغاء</button><button class="btn danger" id="dlgOk">تأكيد</button></div></div>
 </div>
 <div id="dailyPop" class="hidden overlay">
-  <div class="modal"><div class="gift">🎁</div><h2>مكافأتك اليومية جاهزة!</h2><small id="dpDay"></small><div class="ov-coins" id="dpAmt"></div>
+  <div class="modal"><div class="gift">🎁</div><h2>مكافأتك اليومية جاهزة!</h2><div class="wk" id="dpWk"></div><small id="dpDay"></small><div class="ov-coins" id="dpAmt"></div>
     <button class="btn big" id="dpClaim">استلم الآن</button><button class="btn ghost" id="dpLater">لاحقاً</button></div>
 </div>
+<div id="quest" class="hidden"><div class="q-ic">🏆</div><div class="q-tx"><small>مهمة منجزة!</small><b id="qTitle"></b></div><div class="q-rw" id="qRw"></div><i class="q-shine"></i></div>
 <div id="toast"></div>
 
 <script src="js/util.js"></script>
