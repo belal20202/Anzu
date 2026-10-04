@@ -1,6 +1,6 @@
 {
   "name": "anzu-game",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Anzu - لعبة عراقية شبيهة بفلابي بيرد",
   "private": true,
   "scripts": {
