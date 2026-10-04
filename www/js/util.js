@@ -14,12 +14,12 @@ const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+pad2(d.getMont
 const dayNum=s=>{const p=s.split('-');return Math.round(Date.UTC(+p[0],+p[1]-1,+p[2])/864e5);};
 
 const SAVE_KEY='anzu_save_v1';
-const defSave=()=>({v:2,coins:0,best:0,skin:0,owned:[0],up:{magnet:0,shield:0,slow:0},
-  set:{sfx:true,music:true,vib:true,weather:true,low:false,vol:0.8},
+const defSave=()=>({v:3,coins:0,best:0,skin:0,owned:[0],up:{magnet:0,shield:0,slow:0},
+  set:{sfx:true,music:true,vib:true,weather:true,q:0,fps:60,vol:0.8},
   story:false,daily:{start:'',claimed:[0,0,0,0,0,0,0]},
   mis:{date:'',list:[],prog:{},claimed:{}},stats:{runs:0,meters:0}});
 function mergeInto(d,o){for(const k in o){if(o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k])&&d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k]))mergeInto(d[k],o[k]);else d[k]=o[k];}return d;}
-function loadSave(){try{const o=JSON.parse(localStorage.getItem(SAVE_KEY));if(o&&(!o.v||o.v<2)){o.owned=[0];o.skin=0;o.v=2;}return o?mergeInto(defSave(),o):defSave();}catch(e){return defSave();}}
+function loadSave(){try{const o=JSON.parse(localStorage.getItem(SAVE_KEY));if(!o)return defSave();if(!o.v||o.v<3){o.owned=[0];o.skin=0;o.v=3;}if(o.set&&o.set.low!==undefined){o.set.q=o.set.low?1:0;delete o.set.low;}return mergeInto(defSave(),o);}catch(e){return defSave();}}
 let S=loadSave();
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
 function vibrate(ms){if(S.set.vib&&navigator.vibrate){try{navigator.vibrate(ms);}catch(e){}}}
