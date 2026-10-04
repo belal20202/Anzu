@@ -30,6 +30,8 @@ function sfx(name){
     case'fall':sweep(520,70,.7,'sine',.22);break;
     case'buy':[660,880,1175,1568].forEach((f,i)=>tone(f,t+i*.06,.16,'triangle',.22));break;
     case'reward':[523,784,1047].forEach((f,i)=>tone(f,t+i*.1,.25,'sine',.25));break;
+    case'quest':[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.07,.3,'triangle',.22));tone(2093,t+.4,.5,'sine',.08);break;
+    case'thunder':noise(1.6,.45,200,50,.5);sweep(90,40,1.2,'sawtooth',.18);break;
     case'error':sweep(220,120,.22,'square',.15);break;
   }
 }
