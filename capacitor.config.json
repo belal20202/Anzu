@@ -3,5 +3,14 @@
   "appName": "Anzu",
   "webDir": "www",
   "backgroundColor": "#0b1a3a",
-  "android": { "allowMixedContent": false }
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK",
+      "hidden": true
+    }
+  }
 }
