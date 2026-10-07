@@ -22,8 +22,8 @@ const MP=[
  {t:'coins_total',g:100,r:200,m:'add',x:'اجمع 100 عملة اليوم'},
  {t:'runs',g:5,r:120,m:'add',x:'العب 5 جولات'},
  {t:'runs',g:10,r:250,m:'add',x:'العب 10 جولات'},
- {t:'pipes_total',g:50,r:200,m:'add',x:'اعبر 50 عموداً'},
- {t:'pipes_total',g:120,r:350,m:'add',x:'اعبر 120 عموداً'},
+ {t:'pipes_total',g:50,r:200,m:'add',x:'اعبر 50 حاجزاً'},
+ {t:'pipes_total',g:120,r:350,m:'add',x:'اعبر 120 حاجزاً'},
  {t:'pick_magnet',g:3,r:150,m:'add',x:'التقط المغناطيس 3 مرات'},
  {t:'pick_shield',g:3,r:150,m:'add',x:'التقط الدرع 3 مرات'},
  {t:'pick_slow',g:3,r:150,m:'add',x:'التقط تبطيء الوقت 3 مرات'},
@@ -40,20 +40,19 @@ const DAILY=[150,250,350,500,700,900,1500];
 const cv=$('#cv'),ctx=cv.getContext('2d');
 let VW=360,scale=1,state='menu',cur='menu',T=0;
 let cam=0,shake=0,speed=190,dist=0,runCoins=0,passed=0,nextPup=6,deadT=0,overShown=false;
-let curT='day',curW='clear',prevW='clear',nextTm=200,nextWx=120;
+let curT='day',curW='clear',nextTm=200,nextWx=120;
 const bird={y:H*.5,vy:0,rot:0,ft:9,inv:0};
 let pipes=[],coins=[],pups=[],fx=[],seen={};
 const P={magnet:0,shield:0,slow:0,double:0};
 const birdX=()=>clamp(VW*.3,80,150);
 let tsNow=1,slowOn=false;
-const pch={};for(const k in UP)pch[k]={box:$('#pw_'+k),bar:$('#pwb_'+k),on:false,w:''};
+const pch={};for(const k in UP)pch[k]={box:$('#pw_'+k),bar:$('#pwb_'+k),sec:$('#pws_'+k),on:false,w:'',s:''};
 const ci=n=>'<i class="cic"></i><b>'+fmt(n)+'</b>';
 
 /* ====== جودة الرسوم ====== */
 let autoQ=(()=>{const m=navigator.deviceMemory||4,c=navigator.hardwareConcurrency||4;return(m<=2||c<=4)?1:(m<=3||c<=6)?2:3;})();
 let Q=3;
-const QN=['','منخفضة','متوسطة','عالية'];
-function applyQuality(){Q=S.set.q?S.set.q:autoQ;resize();}
+function applyQuality(){Q=autoQ;resize();}
 function resize(){
   const cap=Q===1?1:Q===2?1.5:2,dpr=Math.min(window.devicePixelRatio||1,cap),w=innerWidth||360,h=innerHeight||640;
   cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px';
@@ -75,10 +74,10 @@ function goMenu(){
 }
 const pick=(arr,ex)=>{let v;do{v=arr[Math.floor(Math.random()*arr.length)];}while(v===ex);return v;};
 function markEnv(){if(curT==='night'&&!seen.n){seen.n=1;mp('night',1,'add');}if((curW==='rain'||curW==='storm')&&!seen.r){seen.r=1;mp('rain',1,'add');}if(curW==='snow'&&!seen.s){seen.s=1;mp('snow',1,'add');}}
-function applyEnv(ann){const rb=(prevW==='rain'||prevW==='storm')&&curW==='clear'&&curT!=='night';envTarget(curT,curW,rb);if(ann){announce(TN[curT]+' • '+WN[curW]);markEnv();}}
+function applyEnv(ann){envTarget(curT,curW);if(ann){announce(TN[curT]+' • '+WN[curW]);markEnv();}}
 function goReady(){
   resetRun();state='ready';show(null);setHud(true);$('#hudHint').classList.remove('hidden');$('#hudDist').textContent='0 م';hudCache={};setHtml('hudCoins',ci(0));
-  curT=pick(TIMES);curW=pick(WX);prevW=curW;nextTm=rnd(150,280);nextWx=rnd(70,170);envTarget(curT,curW,false);envUpdate(0,true);updatePowersHud();
+  curT=pick(TIMES);curW=pick(WX);nextTm=rnd(150,280);nextWx=rnd(70,170);envTarget(curT,curW);envUpdate(0,true);updatePowersHud();
 }
 function startPlay(){state='play';$('#hudHint').classList.add('hidden');announce(TN[curT]+' • '+WN[curW]);markEnv();flap();}
 function resetRun(){pipes=[];coins=[];pups=[];fx=[];seen={};dist=0;runCoins=0;passed=0;speed=190;nextPup=rint(5,8);deadT=0;overShown=false;for(const k in P)P[k]=0;tsNow=1;
@@ -161,19 +160,14 @@ $$('.tab').forEach(t=>t.onclick=()=>{shopTab=t.dataset.tab;renderShop();});
 
 /* ====== إعدادات ====== */
 const SETROWS=[['sfx','المؤثرات الصوتية'],['music','الموسيقى'],['vib','الاهتزاز'],['weather','مؤثرات الطقس (مطر وثلج)']];
-const seg=(k,label,opts,hint)=>'<div class="row-card col"><div class="rt">'+label+'</div><div class="seg">'+opts.map(o=>'<button data-seg="'+k+'" data-v="'+o[0]+'" class="'+(S.set[k]===o[0]?'on':'')+'">'+o[1]+'</button>').join('')+'</div>'+(hint?'<small>'+hint+'</small>':'')+'</div>';
 function renderSettings(){
   $('#setList').innerHTML=SETROWS.map(r=>'<div class="row-card"><div class="grow rt">'+r[1]+'</div><button class="sw '+(S.set[r[0]]?'on':'')+'" data-k="'+r[0]+'" aria-label="'+r[1]+'"><i></i></button></div>').join('')+
-   seg('q','جودة الرسوم',[[0,'تلقائي'],[1,'منخفضة'],[2,'متوسطة'],[3,'عالية']],S.set.q?'اختر «منخفضة» إذا كان هاتفك بطيئاً':'الجودة الحالية: '+QN[Q]+' (تُضبط حسب أداء هاتفك)')+
-   seg('fps','معدل الإطارات',[[30,'30 (توفير بطارية)'],[60,'60 (أكثر سلاسة)']])+
    '<div class="row-card"><div class="grow rt">مستوى الصوت</div><input type="range" id="volR" min="0" max="100" value="'+Math.round(S.set.vol*100)+'"></div>'+
    '<div class="row-card"><div class="grow rt">سياسة الخصوصية</div><button class="btn sm" id="btnPriv">عرض</button></div>'+
    '<div class="row-card"><div class="grow rt">إعادة ضبط التقدم</div><button class="btn sm danger" id="btnReset">مسح</button></div>'+
-   '<p class="ver">Anzu — الإصدار 2.0 · صنع في العراق 🇮🇶</p>';
+   '<p class="ver">Anzu — الإصدار 2.1 · صنع في العراق 🇮🇶</p>';
 }
 $('#setList').addEventListener('click',e=>{
-  const sg=e.target.closest('[data-seg]');
-  if(sg){const k=sg.dataset.seg;S.set[k]=+sg.dataset.v;save();if(k==='q')applyQuality();renderSettings();return;}
   const sw=e.target.closest('.sw');
   if(sw){const k=sw.dataset.k;S.set[k]=!S.set[k];save();applyAudio();renderSettings();if(k==='sfx'&&S.set.sfx)sfx('click');return;}
   if(e.target.id==='btnPriv'){$('#privFrame').src='privacy.html';$('#privacy').classList.remove('hidden');}
@@ -184,6 +178,7 @@ $('#privClose').onclick=()=>$('#privacy').classList.add('hidden');
 
 /* ====== أزرار ====== */
 $('#btnPlay').onclick=goReady;
+$('#menuCoins').onclick=()=>{renderShop();show('shop');};
 $('#btnShop').onclick=()=>{renderShop();show('shop');};
 $('#btnMissions').onclick=()=>{renderMissions();show('missions');};
 $('#btnDaily').onclick=()=>{renderDaily();show('daily');};
@@ -238,7 +233,7 @@ function setTxt(id,v){if(hudCache[id]!==v){hudCache[id]=v;$('#'+id).textContent=
 function setHtml(id,v){if(hudCache[id]!==v){hudCache[id]=v;$('#'+id).innerHTML=v;}}
 function updatePowersHud(){
   for(const k in P){const el=pch[k],on=P[k]>0;if(on!==el.on){el.on=on;el.box.style.display=on?'flex':'none';}
-    if(on){const w=clamp(P[k]/upDur(k)*100,0,100).toFixed(0)+'%';if(w!==el.w){el.w=w;el.bar.style.width=w;}}}
+    if(on){const w=clamp(P[k]/upDur(k)*100,0,100).toFixed(0)+'%';if(w!==el.w){el.w=w;el.bar.style.width=w;}const sc=Math.ceil(P[k])+'';if(sc!==el.s){el.s=sc;el.sec.textContent=sc;}}}
   const sl=P.slow>0;if(sl!==slowOn){slowOn=sl;$('#hudSlow').classList.toggle('hidden',!sl);}
 }
 function updatePlay(dt){
@@ -261,7 +256,7 @@ function updatePlay(dt){
     if(rectCirc(p.x,-40,p.w,top+40,bx,bird.y,BR)||rectCirc(p.x-6,top-26,p.w+12,26,bx,bird.y,BR)||rectCirc(p.x,bot,p.w,GY-bot,bx,bird.y,BR)||rectCirc(p.x-6,bot,p.w+12,26,bx,bird.y,BR)){hit('pipe');break;}}
   if(state==='play'&&bird.y+BR>GY)hit('ground');
   if(m>=nextTm){curT=pick(TIMES,curT);nextTm=m+rnd(150,280);applyEnv(true);}
-  if(m>=nextWx){prevW=curW;curW=pick(WX,curW);nextWx=m+rnd(70,170);applyEnv(true);}
+  if(m>=nextWx){curW=pick(WX,curW);nextWx=m+rnd(70,170);applyEnv(true);}
   setTxt('hudDist',Math.floor(m)+' م');setHtml('hudCoins',ci(runCoins)+(P.double>0?'<em>×2</em>':''));updatePowersHud();
 }
 function updateDead(dt){
@@ -282,15 +277,16 @@ function endRun(){
 let lastT=0,lastR=0,accMs=0,accN=0;
 function frame(ts){
   const raw=(ts-lastT)/1000,dt=Math.min(.05,raw||.016);lastT=ts;T+=dt;
-  if(state==='play'&&S.set.q===0&&raw>0&&raw<.25){accMs+=raw*1000;accN++;
-    if(accN>=120){const avg=accMs/accN;accMs=0;accN=0;if(avg>27&&autoQ>1){autoQ--;applyQuality();toast('⚙️ تم خفض الجودة تلقائياً لسلاسة أفضل');}}}
+  if(state==='play'&&raw>0&&raw<.25){accMs+=raw*1000;accN++;
+    if(accN>=120){const avg=accMs/accN;accMs=0;accN=0;if(avg>27&&autoQ>1){autoQ--;applyQuality();}}}
+  setMusicMode(state==='play'?'play':'menu');
   if(state==='play')updatePlay(dt);
   else if(state==='dead')updateDead(dt);
   else if(state==='menu')cam+=26*dt;
   envUpdate(dt);partsUpdate(dt,VW,state==='play'?speed:40);if(lightningTick(dt))setTimeout(()=>sfx('thunder'),350+Math.random()*500);
   for(const f of fx){f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=420*dt;f.life-=dt;}fx=fx.filter(f=>f.life>0);
   if(shake>0)shake=Math.max(0,shake-dt);
-  if(S.set.fps===30&&ts-lastR<30){requestAnimationFrame(frame);return;}
+  if(ts-lastR<9){requestAnimationFrame(frame);return;}
   lastR=ts;render();
   requestAnimationFrame(frame);
 }
