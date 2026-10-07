@@ -17,10 +17,10 @@
     <div class="pill gold" id="hudCoins"><i class="cic"></i><b>0</b></div>
   </div>
   <div id="hudPowers">
-    <div class="pchip" id="pw_magnet"><span>🧲</span><div class="pbar"><i id="pwb_magnet"></i></div></div>
-    <div class="pchip" id="pw_shield"><span>🛡️</span><div class="pbar"><i id="pwb_shield"></i></div></div>
-    <div class="pchip" id="pw_slow"><span>⏳</span><div class="pbar"><i id="pwb_slow"></i></div></div>
-    <div class="pchip" id="pw_double"><span>💰</span><div class="pbar"><i id="pwb_double"></i></div></div>
+    <div class="pchip" id="pw_magnet"><span>🧲</span><div class="pbar"><i id="pwb_magnet"></i></div><em class="ps" id="pws_magnet"></em></div>
+    <div class="pchip" id="pw_shield"><span>🛡️</span><div class="pbar"><i id="pwb_shield"></i></div><em class="ps" id="pws_shield"></em></div>
+    <div class="pchip" id="pw_slow"><span>⏳</span><div class="pbar"><i id="pwb_slow"></i></div><em class="ps" id="pws_slow"></em></div>
+    <div class="pchip" id="pw_double"><span>💰</span><div class="pbar"><i id="pwb_double"></i></div><em class="ps" id="pws_double"></em></div>
   </div>
   <div id="hudSlow" class="hidden">⏳ تبطيء الوقت</div>
   <div id="hudPhase"></div>
@@ -29,12 +29,11 @@
 
 <section id="menu" class="screen hidden menu">
   <div class="menu-top">
-    <div class="pill gold" id="menuCoins"><i class="cic"></i><b>0</b></div>
+    <button class="pill gold pillbtn" id="menuCoins" aria-label="المتجر"><i class="cic"></i><b>0</b></button>
     <div class="pill" id="menuBest"><span>🏆</span><b></b></div>
   </div>
   <div class="logo">
     <h1>Anzu</h1>
-    <div class="logo-ar">أنزو</div>
   </div>
   <div class="grow"></div>
   <div class="menu-btns">
@@ -88,7 +87,7 @@
 
 <section id="over" class="screen hidden dim center">
   <div class="modal over">
-    <h2>سقط أنزو</h2>
+    <h2>انتهت الجولة</h2>
     <div class="ov-dist" id="ovDist">0 م</div>
     <div class="ov-best" id="ovBest"></div>
     <div class="ov-coins" id="ovCoins"></div>
@@ -113,6 +112,7 @@
 
 <script src="js/util.js"></script>
 <script src="js/audio.js"></script>
+<script src="js/skins.js"></script>
 <script src="js/art.js"></script>
 <script src="js/game.js"></script>
 </body>
